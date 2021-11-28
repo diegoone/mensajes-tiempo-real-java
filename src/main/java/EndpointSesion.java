@@ -1,26 +1,26 @@
 import javax.websocket.Endpoint;
+
 import javax.websocket.EndpointConfig;
 import javax.websocket.MessageHandler;
+import javax.websocket.OnMessage;
 import javax.websocket.Session;
+import javax.websocket.server.ServerEndpoint;
+
 import java.io.IOException;
 import java.util.Map;
-public class EndpointSesion extends Endpoint {
-	@Override
-	public void onOpen(final Session session, EndpointConfig config) {
-		session.addMessageHandler(new MessageHandler.Whole<String>() {
-			@Override
-			public void onMessage(String msg) {
-				try {
-					msg = msg.trim();
-					msg = msg.replace(' ','\0') + Math.random();
-					Map<String, Object> estado = session.getUserProperties();
-					estado.put("nombreUsuario", msg);
-					session.getBasicRemote();
-					session.getBasicRemote().sendText(msg);
-				} catch( IOException e) {
-					
-				}
-			}
-		});
+@ServerEndpoint("/establecer-nombre")
+public class EndpointSesion {
+	@OnMessage
+	public void OnMessage(Session sesion, String msj) {
+		try {
+			msj = msj.trim();
+			msj = msj.replace(' ','\0') + Math.random();
+			Map<String, Object> estado = sesion.getUserProperties();
+			estado.put("nombreUsuario", msj);
+			sesion.getBasicRemote();
+			sesion.getBasicRemote().sendText(msj);
+		} catch( IOException e) {
+			
+		}
 	}
 }
