@@ -8,7 +8,7 @@
 		<h1>Conversación en tiempo real</h1>
 		<div class="row">
 			<div class="col-md-6">
-				<form id="form" action="#">
+				<form id="form-alias" action="#">
 					<div class="form-group">
 						<label for="alias">¿Cuál es tu nombre?</label> <input type="text"
 							class="form-control" id="alias" autocomplete='off'>
