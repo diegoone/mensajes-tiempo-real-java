@@ -1,13 +1,31 @@
-const divMensajes = document.getElementById("sala-msj");
 const URL_BASE = "ws://localhost:8080/mywebsocket";
 let socket = new WebSocket(URL_BASE + "/mensaje-grupal");
-const form = document.getElementById('form');
+const divMensajes = document.getElementById("sala-msj");
+const formMensaje = document.getElementById('form-mensaje');
 const elemMensaje = document.getElementById('mensaje');
-const elemNombre = document.getElementById('nombre');
-form.addEventListener('submit', function (event){
+formMensaje.addEventListener('submit', function (event){
 	event.preventDefault();
-	socket.send(elemMensaje.value);
+	const mensaje = {
+		tipo: "mensaje-grupal", 
+		contenido: {
+			fechaCreacion: null, 
+			contenido: elemMensaje.value  
+		}
+	};
+	socket.send(JSON.stringify(mensaje));
 	elemMensaje.value="";
+});
+const elemNombreUsuario = document.getElementById('nombre-usuario');
+const formNombreUsuario = document.getElementById('form-nombre-usuario');
+formNombreUsuario.addEventListener('submit', function (event) {
+	event.preventDefault();
+	const mensaje = {
+		tipo: "sesion", 
+		contenido: {
+			nombreUsuario: elemNombreUsuario.value 
+		}
+	};
+	socket.send(JSON.stringify(mensaje));
 });
 socket.onopen = function(e) {
   console.log("[open] Connection established");
@@ -15,7 +33,15 @@ socket.onopen = function(e) {
 
 socket.onmessage = function(event) {
   const nuevoMsj = document.createElement('div');
-  nuevoMsj.innerText = event.data;
+  const mensajeRespuesta = JSON.parse(event.data);
+  if(mensajeRespuesta.tipo === 'sesion') {
+	//...
+  } else if(mensajeRespuesta.tipo === 'mensaje-grupal') {
+	console.log(mensajeRespuesta.contenido);
+	nuevoMsj.innerHTML = "<div>" + mensajeRespuesta.contenido.idUsuario 
+	+ "<br> "+mensajeRespuesta.contenido.contenido
+	+ "<br>"+mensajeRespuesta.contenido.fechaCreacion+"<div>";
+  }
   divMensajes.appendChild(nuevoMsj);
 };
 
@@ -31,4 +57,23 @@ socket.onclose = function(event) {
 
 socket.onerror = function(error) {
 	console.log('[error] ${error.message}');
+};
+obj = {
+	tipo: "establecer",
+	propiedades: {
+		id: "", 
+		nombre:"",
+	}
+};
+obj = {
+	tipo: "mensaje-privado",
+	mensaje: { 
+		contenido:"",
+	}
+};
+obj = {
+	tipo: "mensaje-grupal",
+	mensaje: {
+		contenido: ""
+	}
 };

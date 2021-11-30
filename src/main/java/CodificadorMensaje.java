@@ -4,13 +4,13 @@ import javax.websocket.EndpointConfig;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-public class CodificadorMensaje implements Encoder.Text<Mensaje> {
+public class CodificadorMensaje implements Encoder.Text<MensajeGenerico> {
 	@Override
 	public void init(EndpointConfig config) {}
 	@Override
 	public void destroy() {}
 	@Override
-	public String encode(Mensaje mensaje) throws EncodeException {
+	public String encode(MensajeGenerico mensaje) throws EncodeException {
 		ObjectMapper mapper = new ObjectMapper();
 		String texto = null;
 		try {

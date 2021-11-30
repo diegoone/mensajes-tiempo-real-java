@@ -8,15 +8,15 @@
 		<h1>Conversación en tiempo real</h1>
 		<div class="row">
 			<div class="col-md-6">
-				<form id="form-alias" action="#">
+				<form id="form-nombre-usuario" action="#">
 					<div class="form-group">
-						<label for="alias">¿Cuál es tu nombre?</label> <input type="text"
-							class="form-control" id="alias" autocomplete='off'>
+						<label for="nombre-usuario">¿Cuál es tu nombre?</label> <input type="text"
+							class="form-control" id="nombre-usuario" autocomplete='off'>
 						<button id="btn-enviar" class="btn btn-sm btn-primary"
 							type="submit">Establecer nombre</button>
 					</div>
 				</form>
-				<form id="form" action="#">
+				<form id="form-mensaje" action="#">
 					<div class="form-group">
 						<label for="exampleInputPassword1">Mensaje</label> <input
 							type="text" class="form-control" id="mensaje" autocomplete='off'>

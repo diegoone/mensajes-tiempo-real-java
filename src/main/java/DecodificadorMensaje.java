@@ -3,9 +3,10 @@ import javax.websocket.Decoder;
 import javax.websocket.EndpointConfig;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-public class DecodificadorMensaje implements Decoder.Text<Mensaje> {
+public class DecodificadorMensaje implements Decoder.Text<MensajeGenerico> {
 	@Override
 	public void init(EndpointConfig ec) {
 	}
@@ -15,16 +16,26 @@ public class DecodificadorMensaje implements Decoder.Text<Mensaje> {
 	}
 
 	@Override
-	public Mensaje decode(String text) throws DecodeException {
-		Mensaje mensaje = null;
+	public MensajeGenerico decode(String text) throws DecodeException {
+		MensajeGenerico mensajeGenerico = null;
 		ObjectMapper mapper = new ObjectMapper();
 		try {
-			mensaje = mapper.readValue(text, Mensaje.class);
+			mensajeGenerico = mapper.readValue(text, MensajeGenerico.class);
+			if(mensajeGenerico.isSesion() || mensajeGenerico.isEstablecer()) {
+				MensajeSesion mensaje = mapper.convertValue(mensajeGenerico.contenido, MensajeSesion.class);
+				mensajeGenerico.contenido = mensaje;
+			} else if(mensajeGenerico.isGrupal()) {
+				Mensaje mensaje = mapper.convertValue(mensajeGenerico.contenido, Mensaje.class);
+				mensajeGenerico.contenido = mensaje;
+			} else if(mensajeGenerico.isPrivado()) {
+				Mensaje mensaje = mapper.convertValue(mensajeGenerico.contenido, Mensaje.class);
+				mensajeGenerico.contenido = mensaje;
+			}
 		} catch (JsonProcessingException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		return mensaje;
+		return mensajeGenerico;
 //	      // Read message...
 //	      if ( /* message is an A message */ )
 //	         return new MessageA(...);
