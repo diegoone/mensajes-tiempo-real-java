@@ -2,6 +2,18 @@
 <head>
 	<title>Conversación en tiempo real</title>
 	<link rel="stylesheet" href="bootstrap-5.1.3-dist/css/bootstrap.css" />
+	<style>
+	.elemento-mensaje {
+	padding: .5em 1em;
+	border-radius: 1em;
+	}
+	.elemento-mi-mensaje {
+		background-color: lightgray;
+	}
+	.elemento-mensaje-grupal {
+		background-color: beige;
+	}
+	</style>
 </head>
 <body>
 	<div class="container">
@@ -33,6 +45,13 @@
 			</div>
 		</div>
 	</div>
+	<template id="plantilla-mensaje">
+		<div class="elemento-mensaje">
+			<div data-nombre-usuario>Nombre Usuario</div>
+			<div data-contenido>Contenido</div>
+			<div data-fecha-creacion>Fecha creación</div>
+		</div>
+	</template>
 	<script src="js/aplicacion.js"></script>
 </body>
 </html>

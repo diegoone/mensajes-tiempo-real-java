@@ -46,6 +46,7 @@ public class EndpointMensajeGrupal {
 				}
 			} else if(mensajeWebSocket.isGrupal()) {
 				Mensaje mensajeGrupal = (Mensaje) mensajeWebSocket.contenido;
+				mensajeGrupal.nombreUsuario = (String) estado.get("nombreUsuario");
 				mensajeGrupal.idUsuario = idUsuario;
 				mensajeGrupal.fechaCreacion = new Date();
 				for (Session ses : sesion.getOpenSessions()) {

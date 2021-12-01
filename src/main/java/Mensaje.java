@@ -8,4 +8,5 @@ public class Mensaje {
 	public Date fechaCreacion;
 	public String contenido;
 	public String idUsuario;
+	public String nombreUsuario;
 }

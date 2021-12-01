@@ -3,6 +3,7 @@ let socket = new WebSocket(URL_BASE + "/mensaje-grupal");
 const divMensajes = document.getElementById("sala-msj");
 const formMensaje = document.getElementById('form-mensaje');
 const elemMensaje = document.getElementById('mensaje');
+const sesion = {};
 formMensaje.addEventListener('submit', function (event){
 	event.preventDefault();
 	const mensaje = {
@@ -30,17 +31,29 @@ formNombreUsuario.addEventListener('submit', function (event) {
 socket.onopen = function(e) {
   console.log("[open] Connection established");
 };
-
+const ElementoMensaje = function (mensaje,esMiPropioMensaje) {
+	const plantilla = document.getElementById("plantilla-mensaje");
+	const clon = document.importNode(plantilla.content, true);
+	clon.querySelector('div[data-nombre-usuario]').innerText = mensaje.nombreUsuario;
+	clon.querySelector('div[data-contenido]').innerText = mensaje.contenido;
+	clon.querySelector('div[data-fecha-creacion]').innerText = mensaje.fechaCreacion;
+	if(esMiPropioMensaje === true) {
+		clon.querySelector('div.elemento-mensaje').classList.add('elemento-mi-mensaje');
+	} else {
+		clon.querySelector('div.elemento-mensaje').classList.add('elemento-mensaje-grupal');
+	}
+	return clon;
+}
 socket.onmessage = function(event) {
-  const nuevoMsj = document.createElement('div');
+  var nuevoMsj = document.createElement('div');
   const mensajeRespuesta = JSON.parse(event.data);
+  const mensaje = mensajeRespuesta.contenido;
   if(mensajeRespuesta.tipo === 'sesion') {
-	//...
+	sesion.nombreUsuario = mensaje.nombreUsuario;
+	sesion.idUsuario = mensaje.idUsuario;
   } else if(mensajeRespuesta.tipo === 'mensaje-grupal') {
-	console.log(mensajeRespuesta.contenido);
-	nuevoMsj.innerHTML = "<div>" + mensajeRespuesta.contenido.idUsuario 
-	+ "<br> "+mensajeRespuesta.contenido.contenido
-	+ "<br>"+mensajeRespuesta.contenido.fechaCreacion+"<div>";
+	const elemMensaje = ElementoMensaje(mensaje, mensaje.idUsuario === sesion.idUsuario);
+	nuevoMsj = elemMensaje;
   }
   divMensajes.appendChild(nuevoMsj);
 };
@@ -57,23 +70,4 @@ socket.onclose = function(event) {
 
 socket.onerror = function(error) {
 	console.log('[error] ${error.message}');
-};
-obj = {
-	tipo: "establecer",
-	propiedades: {
-		id: "", 
-		nombre:"",
-	}
-};
-obj = {
-	tipo: "mensaje-privado",
-	mensaje: { 
-		contenido:"",
-	}
-};
-obj = {
-	tipo: "mensaje-grupal",
-	mensaje: {
-		contenido: ""
-	}
 };
