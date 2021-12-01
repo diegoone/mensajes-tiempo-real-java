@@ -1,3 +1,7 @@
+package comunicacion;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class MensajeGenerico {
 	public Object contenido;
@@ -30,9 +34,16 @@ public class MensajeGenerico {
 	public boolean isSesion() {
 		return "sesion".equals(tipo);
 	}
+	public boolean isListaConectados() {
+		return "lista-conectados".equals(tipo);
+	}
 	private boolean isTipoValido(String tipo) {
-		return "mensaje-privado".equals(tipo) || "mensaje-grupal".equals(tipo) 
-				|| "establecer".equals(tipo) || "sesion".equals(tipo);   
+		List<String> tiposValidos = Arrays.asList(
+			"mensaje-privado", "mensaje-grupal", 
+			"establecer", "sesion", 
+			"lista-conectados", "lista-grupos"
+		);
+		return tiposValidos.contains(tipo);
 	}
 	public void setTipo(String tipo) {
 		if( isTipoValido(tipo) ) {

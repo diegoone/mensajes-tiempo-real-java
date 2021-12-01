@@ -1,6 +1,7 @@
+package varios;
 import java.util.Random;
 
-public class RandomString {
+public class CadenaAleatoria {
 	private static final String cadenaAlfaNumerica = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
             + "abcdefghijklmnopqrstuvxyz"
             + "0123456789"; 

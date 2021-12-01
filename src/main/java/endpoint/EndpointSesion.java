@@ -1,3 +1,4 @@
+package endpoint;
 import javax.websocket.Endpoint;
 
 import javax.websocket.EndpointConfig;

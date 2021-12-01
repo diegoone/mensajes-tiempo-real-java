@@ -1,3 +1,4 @@
+package comunicacion;
 import javax.websocket.DecodeException;
 import javax.websocket.Decoder;
 import javax.websocket.EndpointConfig;
@@ -5,6 +6,9 @@ import javax.websocket.EndpointConfig;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+import aplicacion.Mensaje;
+import aplicacion.MensajeSesion;
 
 public class DecodificadorMensaje implements Decoder.Text<MensajeGenerico> {
 	@Override

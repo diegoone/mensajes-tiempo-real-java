@@ -1,3 +1,4 @@
+package aplicacion;
 
 public class MensajeSesion {
 	private String nombreUsuario;

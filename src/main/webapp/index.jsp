@@ -47,9 +47,9 @@
 	</div>
 	<template id="plantilla-mensaje">
 		<div class="elemento-mensaje">
-			<div data-nombre-usuario>Nombre Usuario</div>
+			<div class="font-weight-bold" data-nombre-usuario>Nombre Usuario</div>
 			<div data-contenido>Contenido</div>
-			<div data-fecha-creacion>Fecha creación</div>
+			<div class="font-italic " data-fecha-creacion>Fecha creación</div>
 		</div>
 	</template>
 	<script src="js/aplicacion.js"></script>

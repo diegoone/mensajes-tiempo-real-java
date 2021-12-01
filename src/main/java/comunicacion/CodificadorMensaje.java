@@ -1,3 +1,4 @@
+package comunicacion;
 import javax.websocket.EncodeException;
 import javax.websocket.Encoder;
 import javax.websocket.EndpointConfig;
