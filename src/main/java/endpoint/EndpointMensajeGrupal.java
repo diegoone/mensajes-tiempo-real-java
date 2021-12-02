@@ -7,6 +7,7 @@ import javax.websocket.OnOpen;
 import javax.websocket.Session;
 import javax.websocket.server.ServerEndpoint;
 
+import aplicacion.AdministradorGrupos;
 import aplicacion.GrupoWebsocket;
 import aplicacion.Mensaje;
 import aplicacion.MensajeSesion;
@@ -26,41 +27,16 @@ import varios.CadenaAleatoria;
 	decoders = { DecodificadorMensaje.class }
 )
 public class EndpointMensajeGrupal {
-	public List<GrupoWebsocket> listaGrupos;
+	private AdministradorGrupos adminGrupos;
 	public EndpointMensajeGrupal() {
-		listaGrupos = new ArrayList<GrupoWebsocket>();
+		adminGrupos = new AdministradorGrupos();
 	}
 	@OnOpen
 	public void OnOpen(Session sesion) {
 		String idUsuario = CadenaAleatoria.generar(15);
 		sesion.getUserProperties().put("idUsuario", idUsuario);
 	}
-	public boolean crearGrupo(String nombreGrupo) {
-		String idGrupo = CadenaAleatoria.generar(5);
-		GrupoWebsocket nuevoGrupo = new GrupoWebsocket(idGrupo, nombreGrupo);
-		for (GrupoWebsocket grupo : listaGrupos) {
-			if(grupo.getNombre().equals(nombreGrupo)) {
-				return false;
-			}
-		}
-		listaGrupos.add(nuevoGrupo);
-		return true;
-	}
-	public boolean agregarSesion(String idGrupo, Session sesion) {
-		GrupoWebsocket grupoEncontrado = buscarPorId(idGrupo);
-		if(grupoEncontrado != null) {
-			grupoEncontrado.agregar(sesion);
-			return true;
-		}
-		return false;
-	}
-	public GrupoWebsocket buscarPorId(String idGrupo) {
-		for (GrupoWebsocket grupo : listaGrupos) {
-			if(grupo.getIdGrupo().equals(idGrupo))
-				return grupo;
-		}
-		return null;
-	}
+	
 	@OnMessage
 	public void OnMessage(Session sesion, MensajeGenerico mensajeWebSocket) {
 		
