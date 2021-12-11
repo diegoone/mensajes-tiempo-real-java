@@ -10,7 +10,7 @@ import javax.websocket.server.ServerEndpoint;
 import java.io.IOException;
 import java.util.Map;
 @ServerEndpoint("/establecer-nombre")
-public class EndpointSesion {
+public class EndpointMensajePrivado {
 	@OnMessage
 	public void OnMessage(Session sesion, String msj) {
 		try {

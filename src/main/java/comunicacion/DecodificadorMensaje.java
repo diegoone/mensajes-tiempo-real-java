@@ -8,7 +8,9 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import aplicacion.Mensaje;
+import aplicacion.MensajeGrupal;
 import aplicacion.MensajeSesion;
+import aplicacion.MensajeSolicitudGrupo;
 
 public class DecodificadorMensaje implements Decoder.Text<MensajeGenerico> {
 	@Override
@@ -29,11 +31,13 @@ public class DecodificadorMensaje implements Decoder.Text<MensajeGenerico> {
 				MensajeSesion mensaje = mapper.convertValue(mensajeGenerico.contenido, MensajeSesion.class);
 				mensajeGenerico.contenido = mensaje;
 			} else if(mensajeGenerico.isGrupal()) {
-				Mensaje mensaje = mapper.convertValue(mensajeGenerico.contenido, Mensaje.class);
+				MensajeGrupal mensaje = mapper.convertValue(mensajeGenerico.contenido, MensajeGrupal.class);
 				mensajeGenerico.contenido = mensaje;
 			} else if(mensajeGenerico.isPrivado()) {
 				Mensaje mensaje = mapper.convertValue(mensajeGenerico.contenido, Mensaje.class);
 				mensajeGenerico.contenido = mensaje;
+			} else if(mensajeGenerico.isSolicitudGrupo()) {
+				MensajeSolicitudGrupo solicitudGrupo = mapper.convertValue(mensajeGenerico.contenido, MensajeSolicitudGrupo.class);
 			}
 		} catch (JsonProcessingException e) {
 			// TODO Auto-generated catch block

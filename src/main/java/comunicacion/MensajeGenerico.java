@@ -46,12 +46,16 @@ public class MensajeGenerico {
 	public boolean isQuitarUsuarioDeGrupo() {
 		return "quitar-usuario-grupo".equals(tipo);
 	}
+	public boolean isSolicitudGrupo() {
+		return "solicitud-grupo".equals(tipo); 
+	}
 	private boolean isTipoValido(String tipo) {
 		List<String> tiposValidos = Arrays.asList(
 			"mensaje-privado", "mensaje-grupal", 
 			"establecer", "sesion", 
 			"lista-conectados", "lista-grupos", 
-			"crear-grupo", "agregar-usuario-grupo", "quitar-usuario-grupo"
+			"crear-grupo", "agregar-usuario-grupo", "quitar-usuario-grupo", 
+			"solicitud-grupo"
 		);
 		return tiposValidos.contains(tipo);
 	}

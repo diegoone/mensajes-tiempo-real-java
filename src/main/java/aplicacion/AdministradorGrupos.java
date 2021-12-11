@@ -12,16 +12,16 @@ public class AdministradorGrupos {
 	public AdministradorGrupos() {
 		listaGrupos = new ArrayList<GrupoWebsocket>();
 	}
-	public boolean crearGrupo(String nombreGrupo) {
+	public GrupoWebsocket crearGrupo(String nombreGrupo) {
 		String idGrupo = CadenaAleatoria.generar(5);
 		GrupoWebsocket nuevoGrupo = new GrupoWebsocket(idGrupo, nombreGrupo);
 		for (GrupoWebsocket grupo : listaGrupos) {
 			if(grupo.getNombre().equals(nombreGrupo)) {
-				return false;
+				return null;
 			}
 		}
 		listaGrupos.add(nuevoGrupo);
-		return true;
+		return nuevoGrupo;
 	}
 	public boolean agregarSesion(String idGrupo, Session sesion) {
 		GrupoWebsocket grupoEncontrado = buscarPorId(idGrupo);

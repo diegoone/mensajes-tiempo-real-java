@@ -10,7 +10,8 @@ formMensaje.addEventListener('submit', function (event){
 		tipo: "mensaje-grupal", 
 		contenido: {
 			fechaCreacion: null, 
-			contenido: elemMensaje.value  
+			contenido: elemMensaje.value, 
+			idGrupo: sesion.idGrupo
 		}
 	};
 	socket.send(JSON.stringify(mensaje));
@@ -24,7 +25,7 @@ formNombreUsuario.addEventListener('submit', function (event) {
 		tipo: "sesion", 
 		contenido: {
 			nombreUsuario: elemNombreUsuario.value 
-		}
+		}  
 	};
 	socket.send(JSON.stringify(mensaje));
 });
@@ -51,7 +52,15 @@ socket.onmessage = function(event) {
   if(mensajeRespuesta.tipo === 'sesion') {
 	sesion.nombreUsuario = mensaje.nombreUsuario;
 	sesion.idUsuario = mensaje.idUsuario;
-  } else if(mensajeRespuesta.tipo === 'mensaje-grupal') {
+	const mensajeCrearGrupo = {
+		tipo: "crear-grupo", 
+		contenido: "mi grupo 1"
+	};
+	socket.send(JSON.stringify(mensajeCrearGrupo));
+  } else if(mensajeRespuesta.tipo === 'crear-grupo') {
+	sesion.idGrupo = mensajeRespuesta.contenido;
+  } 
+  else if(mensajeRespuesta.tipo === 'mensaje-grupal') {
 	const elemMensaje = ElementoMensaje(mensaje, mensaje.idUsuario === sesion.idUsuario);
 	nuevoMsj = elemMensaje;
   }
