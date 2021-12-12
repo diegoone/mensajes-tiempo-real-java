@@ -13,8 +13,9 @@ import aplicacion.AdministradorGrupos;
 import aplicacion.GrupoWebsocket;
 import aplicacion.Mensaje;
 import aplicacion.MensajeGrupal;
+import aplicacion.MensajePeticionGrupal;
 import aplicacion.MensajeSesion;
-import aplicacion.MensajeSolicitudGrupo;
+import aplicacion.MensajePeticionGrupal;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -56,22 +57,6 @@ public class EndpointMensajeGrupal {
 			else if(mensajeWebSocket.isGrupal()) {
 				MensajeGrupal mensajeGrupal = (MensajeGrupal) mensajeWebSocket.contenido;
 				procesarMensajeGrupal(sesion, mensajeWebSocket, mensajeGrupal);
-			} else if(mensajeWebSocket.isCrearGrupo()) {
-					String nombreGrupo = (String) mensajeWebSocket.contenido;
-					GrupoWebsocket grupoCreado = adminGrupos.crearGrupo( nombreGrupo );
-					if(grupoCreado == null) {
-						
-					} else {
-						// el grupo fué creado, entonces agregar al usuario actual al grupo
-						grupoCreado.agregar(sesion);
-						mensajeWebSocket.contenido = grupoCreado.getIdGrupo();
-						sesion.getBasicRemote().sendObject(mensajeWebSocket);
-						MensajeGrupal primerMensaje = new MensajeGrupal();
-						primerMensaje.fechaCreacion = grupoCreado.getFechaCreacion();
-						primerMensaje.idGrupo = grupoCreado.getIdGrupo();
-						primerMensaje.contenido = "Se creó el grupo";
-						grupoCreado.enviarATodos(primerMensaje);
-					}
 			}
 		} catch( IOException e) {
 			
@@ -126,15 +111,33 @@ public class EndpointMensajeGrupal {
 	}
 
 	public void procesarSolicitudGrupo(Session sesion, MensajeGenerico mensajeWebSocket) throws IOException, EncodeException {
-		MensajeSolicitudGrupo solicitudGrupo = (MensajeSolicitudGrupo) mensajeWebSocket.contenido;
-		if(solicitudGrupo.isUnir()) {
-			GrupoWebsocket grupoEncontrado = adminGrupos.buscarPorId(solicitudGrupo.idGrupo);
+		MensajePeticionGrupal peticionGrupo = (MensajePeticionGrupal) mensajeWebSocket.contenido;
+		if(peticionGrupo.isCrearGrupo()) {
+			String nombreGrupo = peticionGrupo.nombreGrupo;
+			GrupoWebsocket grupoCreado = adminGrupos.crearGrupo(nombreGrupo);
+			if (grupoCreado == null) {
+
+			} else {
+				// el grupo fué creado, entonces agregar al usuario actual al grupo
+				grupoCreado.agregar(sesion);
+				peticionGrupo.idGrupo = grupoCreado.getIdGrupo();
+				mensajeWebSocket.contenido = peticionGrupo;
+				sesion.getBasicRemote().sendObject(mensajeWebSocket);
+				MensajeGrupal primerMensaje = new MensajeGrupal();
+				primerMensaje.fechaCreacion = grupoCreado.getFechaCreacion();
+				primerMensaje.idGrupo = grupoCreado.getIdGrupo();
+				primerMensaje.contenido = "Se creó el grupo";
+				grupoCreado.enviarATodos(primerMensaje);
+			}
+		}
+		else if(peticionGrupo.isUnirA()) {
+			GrupoWebsocket grupoEncontrado = adminGrupos.buscarPorId(peticionGrupo.idGrupo);
 			if(grupoEncontrado== null) {
 				return;
 			}
 			grupoEncontrado.agregar(sesion);
-		} else if(solicitudGrupo.isSalir()) {
-			GrupoWebsocket grupoEncontrado = adminGrupos.buscarPorId(solicitudGrupo.idGrupo);
+		} else if(peticionGrupo.isSalirDe()) {
+			GrupoWebsocket grupoEncontrado = adminGrupos.buscarPorId(peticionGrupo.idGrupo);
 			if(grupoEncontrado== null) {
 				return;
 			}

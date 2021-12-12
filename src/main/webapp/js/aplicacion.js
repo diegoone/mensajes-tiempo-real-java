@@ -1,17 +1,40 @@
 const URL_BASE = "ws://localhost:8080/mywebsocket";
 let socket = new WebSocket(URL_BASE + "/mensaje-grupal");
 const divMensajes = document.getElementById("sala-msj");
+const divGrupos = document.getElementById('contenedor-grupos');
 const formMensaje = document.getElementById('form-mensaje');
 const elemMensaje = document.getElementById('mensaje');
 const sesion = {};
+const listaGrupos = [];
+
+const formCrearGrupo = document.getElementById('form-crear-grupo');
+formCrearGrupo.addEventListener('submit', function (event) {
+	event.preventDefault();
+	var elModalCrearGrupo = document.getElementById('modal-crear-grupo');
+	var modalCrearGrupo = bootstrap.Modal.getOrCreateInstance(elModalCrearGrupo) // Returns a Bootstrap modal instance
+	var inputNombreGrupo = document.getElementById('input-nombre-grupo');
+	const nombreGrupo = inputNombreGrupo.value;
+	inputNombreGrupo.value = '';
+	const solicitudGrupo = {
+		tipo: 'solicitud-grupo', 
+		contenido: {
+			solicitud: 'crear-grupo', 
+			nombreGrupo: nombreGrupo
+		}
+	};
+	modalCrearGrupo.hide();
+	socket.send( JSON.stringify(solicitudGrupo) );
+});
 formMensaje.addEventListener('submit', function (event){
 	event.preventDefault();
+	//obtener el grupo seleccionado
+	const grupo = listaGrupos[0];
 	const mensaje = {
 		tipo: "mensaje-grupal", 
 		contenido: {
 			fechaCreacion: null, 
 			contenido: elemMensaje.value, 
-			idGrupo: sesion.idGrupo
+			idGrupo: grupo.idGrupo
 		}
 	};
 	socket.send(JSON.stringify(mensaje));
@@ -45,6 +68,12 @@ const ElementoMensaje = function (mensaje,esMiPropioMensaje) {
 	}
 	return clon;
 }
+const ElementoGrupo = function (mensaje) {
+	const plantilla = document.getElementById('plantilla-grupo');
+	const clon = document.importNode(plantilla.content, true);
+	clon.querySelector('[data-nombre-grupo]').innerText = mensaje.nombreGrupo;
+	return clon;
+}
 socket.onmessage = function(event) {
   var nuevoMsj = document.createElement('div');
   const mensajeRespuesta = JSON.parse(event.data);
@@ -52,19 +81,17 @@ socket.onmessage = function(event) {
   if(mensajeRespuesta.tipo === 'sesion') {
 	sesion.nombreUsuario = mensaje.nombreUsuario;
 	sesion.idUsuario = mensaje.idUsuario;
-	const mensajeCrearGrupo = {
-		tipo: "crear-grupo", 
-		contenido: "mi grupo 1"
-	};
-	socket.send(JSON.stringify(mensajeCrearGrupo));
-  } else if(mensajeRespuesta.tipo === 'crear-grupo') {
-	sesion.idGrupo = mensajeRespuesta.contenido;
-  } 
+  } else if(mensajeRespuesta.tipo === 'solicitud-grupo' && mensajeRespuesta.contenido.solicitud == 'crear-grupo') {
+	listaGrupos.push(mensajeRespuesta.contenido);
+	const elemGrupo = ElementoGrupo(mensajeRespuesta.contenido);
+	divGrupos.prepend(elemGrupo);
+  }
   else if(mensajeRespuesta.tipo === 'mensaje-grupal') {
 	const elemMensaje = ElementoMensaje(mensaje, mensaje.idUsuario === sesion.idUsuario);
 	nuevoMsj = elemMensaje;
+	divMensajes.prepend(nuevoMsj);
   }
-  divMensajes.prepend(nuevoMsj);
+  
 };
 
 socket.onclose = function(event) {
