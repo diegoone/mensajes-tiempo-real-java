@@ -64,7 +64,7 @@ socket.onmessage = function(event) {
 	const elemMensaje = ElementoMensaje(mensaje, mensaje.idUsuario === sesion.idUsuario);
 	nuevoMsj = elemMensaje;
   }
-  divMensajes.appendChild(nuevoMsj);
+  divMensajes.prepend(nuevoMsj);
 };
 
 socket.onclose = function(event) {
