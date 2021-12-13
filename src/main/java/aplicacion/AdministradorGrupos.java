@@ -1,6 +1,7 @@
 package aplicacion;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.websocket.Session;
@@ -37,5 +38,14 @@ public class AdministradorGrupos {
 				return grupo;
 		}
 		return null;
+	}
+	public int quitarSesionDeTodoGrupo(Session sesion) {
+		int cantidadGrupos = 0;
+		for (GrupoWebsocket grupoWebsocket : listaGrupos) {
+			if(grupoWebsocket.size() > 0 && grupoWebsocket.quitar(sesion) == true) {
+				cantidadGrupos++;
+			}
+		}
+		return cantidadGrupos;
 	}
 }

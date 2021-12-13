@@ -96,4 +96,7 @@ public class GrupoWebsocket {
 	public Date getFechaCreacion() {
 		return this.fechaCreacion;
 	}
+	public int size() {
+		return this.sesiones.size();
+	}
 }

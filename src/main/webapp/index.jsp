@@ -71,7 +71,7 @@
 							<button type="button" id="btn-crear-grupo" class="btn-primary"
 							data-bs-toggle="modal" data-bs-target="#modal-crear-grupo">Crear grupo</button>
 							<button type="button" id="btn-unirse-a-grupo" class="btn-secondary"
-							>Unirse</button>
+							data-bs-toggle='modal' data-bs-target='#modal-unirse-a-grupo'>Unirse</button>
 						</div>
 						<ol id="contenedor-grupos" class="list-group list-group-numbered">
 
@@ -114,7 +114,25 @@
 			</form>
 		</div>
 	</div>
-
+	<div class="modal" id="modal-unirse-a-grupo" tabindex="-1">
+		<div class="modal-dialog modal-sm">
+			<form id="form-unirse-a-grupo" action="#" class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title">Escribe el id del grupo al que deseas unirse</h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal"
+						aria-label="Close"></button>
+				</div>
+				<div class="modal-body">
+					<input class='form-control' id="input-id-grupo" type="text">
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary"
+						data-bs-dismiss="modal">Cancelar</button>
+					<button type="submit" class="btn btn-primary">Unirser</button>
+				</div>
+			</form>
+		</div>
+	</div>
 	<template id="plantilla-mensaje">
 		<div class="elemento-mensaje">
 			<div class="font-weight-bold" data-nombre-usuario>Nombre Usuario</div>

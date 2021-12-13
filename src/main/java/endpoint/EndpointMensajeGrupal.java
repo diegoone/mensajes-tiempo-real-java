@@ -5,6 +5,7 @@ import javax.websocket.EncodeException;
 import javax.websocket.EndpointConfig;
 import javax.websocket.OnMessage;
 import javax.websocket.OnOpen;
+import javax.websocket.OnClose;
 import javax.websocket.Session;
 import javax.websocket.server.PathParam;
 import javax.websocket.server.ServerEndpoint;
@@ -41,7 +42,10 @@ public class EndpointMensajeGrupal {
 		String idUsuario = CadenaAleatoria.generar(15);
 		sesion.getUserProperties().put("idUsuario", idUsuario);
 	}
-	
+	@OnClose
+	public void OnClose(Session sesion) {
+		adminGrupos.quitarSesionDeTodoGrupo(sesion);
+	}
 	@OnMessage
 	public void OnMessage(Session sesion, MensajeGenerico mensajeWebSocket) {
 		

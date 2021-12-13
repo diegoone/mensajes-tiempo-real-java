@@ -6,7 +6,7 @@ const formMensaje = document.getElementById('form-mensaje');
 const elemMensaje = document.getElementById('mensaje');
 const sesion = {};
 const listaGrupos = [];
-
+var idGrupoSeleccionado = null;
 const formCrearGrupo = document.getElementById('form-crear-grupo');
 formCrearGrupo.addEventListener('submit', function (event) {
 	event.preventDefault();
@@ -25,10 +25,14 @@ formCrearGrupo.addEventListener('submit', function (event) {
 	modalCrearGrupo.hide();
 	socket.send( JSON.stringify(solicitudGrupo) );
 });
+const getGrupoSeleccionado = function () {
+	const grupo = listaGrupos.find( g => g.idGrupo === idGrupoSeleccionado);
+	return grupo;
+};
 formMensaje.addEventListener('submit', function (event){
 	event.preventDefault();
 	//obtener el grupo seleccionado
-	const grupo = listaGrupos[0];
+	const grupo = getGrupoSeleccionado();;
 	const mensaje = {
 		tipo: "mensaje-grupal", 
 		contenido: {
@@ -57,39 +61,72 @@ socket.onopen = function(e) {
 };
 const ElementoMensaje = function (mensaje,esMiPropioMensaje) {
 	const plantilla = document.getElementById("plantilla-mensaje");
-	const clon = document.importNode(plantilla.content, true);
+	const clon = plantilla.content.firstElementChild.cloneNode(true);
 	clon.querySelector('div[data-nombre-usuario]').innerText = mensaje.nombreUsuario;
 	clon.querySelector('div[data-contenido]').innerText = mensaje.contenido;
 	clon.querySelector('div[data-fecha-creacion]').innerText = mensaje.fechaCreacion;
 	if(esMiPropioMensaje === true) {
-		clon.querySelector('div.elemento-mensaje').classList.add('elemento-mi-mensaje');
+		clon.classList.add('elemento-mi-mensaje');
 	} else {
-		clon.querySelector('div.elemento-mensaje').classList.add('elemento-mensaje-grupal');
+		clon.classList.add('elemento-mensaje-grupal');
 	}
 	return clon;
 }
 const ElementoGrupo = function (mensaje) {
 	const plantilla = document.getElementById('plantilla-grupo');
-	const clon = document.importNode(plantilla.content, true);
+	const clon = plantilla.content.firstElementChild.cloneNode(true);
 	clon.querySelector('[data-nombre-grupo]').innerText = mensaje.nombreGrupo;
 	return clon;
 }
+const seleccionarGrupo = function (divGrupos, elemGrupo) {
+	const gruposActivos = divGrupos.children;
+	//en teoria solo deberia de haber un elemento activo a la ves, 
+	//pero en caso que el usuario halla activado desde el inspector, aqui se desactiva
+	var i = 0;
+	for ( ; i < gruposActivos.length; i++ ) {
+		if( gruposActivos[i] === elemGrupo ) {
+			gruposActivos[i].classList.add('active');
+		} else { 
+			gruposActivos[i].classList.remove('active');
+		}
+	}
+}
+const cargarMensajes = function (divMensajes, grupo) {
+	var elemMensaje = null;
+	divMensajes.innerHTML = '';
+	grupo.listaMensajes.forEach( mensaje => {
+		elemMensaje= ElementoMensaje(mensaje, mensaje.idUsuario === sesion.idUsuario);
+		divMensajes.prepend(elemMensaje);
+	});
+};
 socket.onmessage = function(event) {
-  var nuevoMsj = document.createElement('div');
   const mensajeRespuesta = JSON.parse(event.data);
   const mensaje = mensajeRespuesta.contenido;
   if(mensajeRespuesta.tipo === 'sesion') {
 	sesion.nombreUsuario = mensaje.nombreUsuario;
 	sesion.idUsuario = mensaje.idUsuario;
   } else if(mensajeRespuesta.tipo === 'solicitud-grupo' && mensajeRespuesta.contenido.solicitud == 'crear-grupo') {
-	listaGrupos.push(mensajeRespuesta.contenido);
-	const elemGrupo = ElementoGrupo(mensajeRespuesta.contenido);
+	const nuevoGrupo = mensajeRespuesta.contenido; 
+	listaGrupos.push(nuevoGrupo);
+	//por defecto iniciar la lista de mensajes vacio e ir agregando en cuanto se reciban
+	nuevoGrupo.listaMensajes = [];
+	const elemGrupo = ElementoGrupo(nuevoGrupo);
+	elemGrupo.addEventListener('click', function (event) {
+		seleccionarGrupo(divGrupos, elemGrupo);
+		idGrupoSeleccionado = nuevoGrupo.idGrupo;
+		//actualizar el div con los mensajes del grupo
+		const grupo = listaGrupos.find( g => g.idGrupo === nuevoGrupo.idGrupo);
+		cargarMensajes(divMensajes, grupo);
+	});
 	divGrupos.prepend(elemGrupo);
+	idGrupoSeleccionado = nuevoGrupo.idGrupo;
+	seleccionarGrupo(divGrupos, elemGrupo);
   }
   else if(mensajeRespuesta.tipo === 'mensaje-grupal') {
-	const elemMensaje = ElementoMensaje(mensaje, mensaje.idUsuario === sesion.idUsuario);
-	nuevoMsj = elemMensaje;
-	divMensajes.prepend(nuevoMsj);
+	const mensajeGrupo = mensajeRespuesta.contenido;
+	const grupo = listaGrupos.find( g => g.idGrupo === mensajeGrupo.idGrupo);
+	grupo.listaMensajes.push(mensaje);
+	cargarMensajes(divMensajes, grupo);
   }
   
 };
